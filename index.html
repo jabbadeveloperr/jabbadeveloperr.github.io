@@ -1,0 +1,86 @@
+<!DOCTYPE html>
+<html lang="uk">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Звернення щодо законопроєкту №14394</title>
+  <link rel="stylesheet" href="styles.css">
+  <script src="https://accounts.google.com/gsi/client" async defer></script>
+</head>
+<body>
+  <div class="container">
+    <header>
+      <h1>Звернення щодо законопроєкту №14394</h1>
+      <p class="subtitle">Цивільний кодекс України — шаблон листа народним депутатам</p>
+    </header>
+
+    <section class="auth-section" id="auth-section">
+
+      <div id="signedin-area" class="hidden">
+        <span id="user-name"></span>
+        <button type="button" id="signout-btn" class="btn btn-secondary">Вийти</button>
+      </div>
+    </section>
+
+    <form id="letter-form">
+      <fieldset>
+        <legend>Ваші дані (заповніть поля, позначені як обовʼязкові)</legend>
+        <label>
+          ПІБ <span class="required">*</span>
+          <input type="text" name="pib" id="pib" required placeholder="Прізвище Ім'я По батькові">
+        </label>
+        <label>
+          Адреса
+          <input type="text" name="address" id="address" placeholder="Ваша адреса">
+        </label>
+        <label>
+          Електронна пошта <span class="required">*</span>
+          <input type="email" name="email" id="email" required placeholder="your@email.com">
+        </label>
+        <label>
+          Ваш персональний коментар <span class="required">*</span>
+          <textarea name="comment" id="comment" rows="4" required placeholder="Чому для вас важливо не підтримувати цей законопроєкт у поточному вигляді? (це допоможе листам не виглядати однаково)"></textarea>
+        </label>
+      </fieldset>
+
+      <fieldset>
+        <legend>Список електронних пошт депутатів</legend>
+        <p class="hint">Можете змінити список перед відправкою. Одна адреса на рядок або через кому.</p>
+        <textarea name="deputy-emails" id="deputy-emails" rows="6" placeholder="stefanchuk-r@rada.gov.ua&#10;korniienko-o@rada.gov.ua&#10;..."></textarea>
+      </fieldset>
+
+      <div class="actions">
+        <button type="button" id="preview-btn" class="btn btn-secondary">Як виглядатиме лист</button>
+        <button type="button" id="send-mailto-btn" class="btn btn-primary">Відкрити у поштовому клієнті</button>
+        <button type="button" id="send-gmail-btn" class="btn btn-primary hidden">Відправити депутатам (Gmail)</button>
+      </div>
+    </form>
+
+    <footer>
+      <p>Дякуємо за вашу ініціативність та вклад у майбутнє України.</p>
+    </footer>
+  </div>
+
+  <!-- Preview modal -->
+  <div id="preview-modal" class="modal hidden" aria-hidden="true">
+    <div class="modal-backdrop" id="preview-close-backdrop"></div>
+    <div class="modal-content">
+      <div class="modal-header">
+        <h2>Попередній перегляд листа</h2>
+        <button type="button" id="preview-close" class="modal-close" aria-label="Закрити">&times;</button>
+      </div>
+      <div class="modal-body">
+        <p><strong>Кому:</strong></p>
+        <pre id="preview-to"></pre>
+        <p><strong>Тема:</strong></p>
+        <p id="preview-subject"></p>
+        <p><strong>Текст листа:</strong></p>
+        <div id="preview-body" class="preview-body"></div>
+      </div>
+    </div>
+  </div>
+
+  <script src="config.js"></script>
+  <script src="app.js"></script>
+</body>
+</html>
