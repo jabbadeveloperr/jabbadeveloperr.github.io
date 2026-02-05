@@ -15,4 +15,4 @@ window.DEFAULT_DEPUTY_EMAILS = [
 // Google OAuth Client ID — замініть на свій для відправки через Gmail API
 // Отримати: https://console.cloud.google.com/apis/credentials
 // Увімкніть Gmail API та створіть OAuth 2.0 Client ID (Web application)
-window.GOOGLE_CLIENT_ID = '';
+window.GOOGLE_CLIENT_ID = '475159314338-k9qo7nhs137sp3tfr8foj4u4jquge2b4.apps.googleusercontent.com';
