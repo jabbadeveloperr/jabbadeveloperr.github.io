@@ -43,17 +43,17 @@
 Дата: {{date}}`;
 
   function getFormData() {
-    const pib = (document.getElementById('pib').value || '').trim();
-    const address = (document.getElementById('address').value || '').trim();
-    const email = (document.getElementById('email').value || '').trim();
-    const comment = (document.getElementById('comment').value || '').trim();
-    const rawEmails = (document.getElementById('deputy-emails').value || '').trim();
-    const emails = rawEmails
+    var pib = (document.getElementById('pib').value || '').trim();
+    var address = (document.getElementById('address').value || '').trim();
+    var email = (document.getElementById('email').value || '').trim();
+    var comment = (document.getElementById('comment').value || '').trim();
+    var rawEmails = (document.getElementById('deputy-emails').value || '').trim();
+    var emails = rawEmails
       .split(/[\n,;]+/)
       .map(function (e) { return e.trim(); })
       .filter(Boolean);
-    const date = new Date().toLocaleDateString('uk-UA', { day: '2-digit', month: '2-digit', year: 'numeric' });
-    return { pib, address, email, comment, emails, date };
+    var date = new Date().toLocaleDateString('uk-UA', { day: '2-digit', month: '2-digit', year: 'numeric' });
+    return { pib: pib, address: address, email: email, comment: comment, emails: emails, date: date };
   }
 
   function fillTemplate(data) {
@@ -65,18 +65,31 @@
       .replace(/\{\{date\}\}/g, data.date);
   }
 
+  function getLetterBody() {
+    return (document.getElementById('letter-body').value || '').trim();
+  }
+
   function getSubject(pib) {
     return 'Звернення щодо законопроєкту №14394 від ' + (pib || 'Прізвище Ім\'я');
   }
 
-  function showPreview() {
-    const data = getFormData();
-    if (!data.pib || !data.email || !data.comment) {
-      alert('Заповніть обов\'язкові поля: ПІБ, електронна пошта та персональний коментар.');
+  function fillTemplateClick() {
+    var data = getFormData();
+    if (!data.pib || !data.email) {
+      alert('Заповніть хоча б ПІБ та електронну пошту перед заповненням шаблону.');
       return;
     }
-    const body = fillTemplate(data);
-    const subject = getSubject(data.pib);
+    document.getElementById('letter-body').value = fillTemplate(data);
+  }
+
+  function showPreview() {
+    var data = getFormData();
+    var body = getLetterBody();
+    if (!body) {
+      alert('Заповніть текст заяви (натисніть «Заповнити шаблон» або введіть текст самостійно).');
+      return;
+    }
+    var subject = getSubject(data.pib);
 
     document.getElementById('preview-to').textContent = data.emails.length ? data.emails.join(', ') : '(список пошт порожній)';
     document.getElementById('preview-subject').textContent = subject;
@@ -94,92 +107,22 @@
   }
 
   function sendMailto() {
-    const data = getFormData();
-    if (!data.pib || !data.email || !data.comment) {
-      alert('Заповніть обов\'язкові поля: ПІБ, електронна пошта та персональний коментар.');
+    var data = getFormData();
+    var body = getLetterBody();
+    if (!body) {
+      alert('Заповніть текст заяви перед відправкою.');
       return;
     }
     if (!data.emails.length) {
       alert('Додайте хоча б одну електронну адресу депутата.');
       return;
     }
-    const body = fillTemplate(data);
-    const subject = getSubject(data.pib);
-    const to = data.emails.map(function (e) { return encodeURIComponent(e); }).join(',');
-    const mailto = 'mailto:' + to +
+    var subject = getSubject(data.pib);
+    var to = data.emails.map(function (e) { return encodeURIComponent(e); }).join(',');
+    var mailto = 'mailto:' + to +
       '?subject=' + encodeURIComponent(subject) +
       '&body=' + encodeURIComponent(body);
     window.location.href = mailto;
-  }
-
-  function sendViaGmail() {
-    if (!window.GOOGLE_CLIENT_ID) {
-      alert('Відправка через Gmail не налаштована. Використайте кнопку «Відкрити у поштовому клієнті».');
-      return;
-    }
-    const data = getFormData();
-    if (!data.pib || !data.email || !data.comment) {
-      alert('Заповніть обов\'язкові поля: ПІБ, електронна пошта та персональний коментар.');
-      return;
-    }
-    if (!data.emails.length) {
-      alert('Додайте хоча б одну електронну адресу депутата.');
-      return;
-    }
-    var doSend = function () {
-      var token = window.accessToken;
-      if (!token) {
-        requestGmailToken(function (err) {
-          if (err) {
-            alert('Помилка авторизації: ' + (err.message || 'невідома'));
-            return;
-          }
-          doSend();
-        });
-        return;
-      }
-      var body = fillTemplate(data);
-      var subject = getSubject(data.pib);
-      var raw = [
-      'To: ' + data.emails.join(', '),
-      'Subject: ' + subject,
-      'Content-Type: text/plain; charset=utf-8',
-      '',
-      body
-      ].join('\r\n');
-      var encoded = btoa(unescape(encodeURIComponent(raw)))
-      .replace(/\+/g, '-')
-      .replace(/\//g, '_')
-      .replace(/=+$/, '');
-
-      var btn = document.getElementById('send-gmail-btn');
-      btn.disabled = true;
-      btn.textContent = 'Відправляю…';
-
-      fetch('https://gmail.googleapis.com/gmail/v1/users/me/messages/send', {
-        method: 'POST',
-        headers: {
-          'Authorization': 'Bearer ' + window.accessToken,
-          'Content-Type': 'application/json'
-        },
-        body: JSON.stringify({ raw: encoded })
-      })
-        .then(function (r) {
-          if (!r.ok) return r.json().then(function (j) { throw new Error(j.error && j.error.message ? j.error.message : r.statusText); });
-          return r.json();
-        })
-        .then(function () {
-          alert('Лист успішно відправлено депутатам.');
-        })
-        .catch(function (err) {
-          alert('Помилка відправки: ' + (err.message || 'невідома помилка'));
-        })
-        .finally(function () {
-          btn.disabled = false;
-          btn.textContent = 'Відправити депутатам (Gmail)';
-        });
-    };
-    doSend();
   }
 
   function initDeputyEmails() {
@@ -189,81 +132,15 @@
     }
   }
 
-  function requestGmailToken(callback) {
-    if (typeof google === 'undefined' || !google.accounts || !google.accounts.oauth2) {
-      callback(new Error('Google OAuth не завантажено'));
-      return;
-    }
-    var tokenClient = google.accounts.oauth2.initTokenClient({
-      client_id: window.GOOGLE_CLIENT_ID,
-      scope: 'https://www.googleapis.com/auth/gmail.send',
-      callback: function (tokenResponse) {
-        if (tokenResponse && tokenResponse.access_token) {
-          window.accessToken = tokenResponse.access_token;
-          callback(null);
-        } else {
-          callback(new Error('Не вдалося отримати доступ'));
-        }
-      }
-    });
-    tokenClient.requestAccessToken({ prompt: 'consent' });
-  }
-
-  function initGoogleSignIn() {
-    if (!window.GOOGLE_CLIENT_ID) {
-      document.getElementById('send-gmail-btn').classList.add('hidden');
-      var authSection = document.getElementById('auth-section');
-      if (authSection) authSection.classList.add('hidden');
-      return;
-    }
-    if (typeof google === 'undefined' || !google.accounts) {
-      setTimeout(initGoogleSignIn, 200);
-      return;
-    }
-    google.accounts.id.initialize({
-      client_id: window.GOOGLE_CLIENT_ID,
-      callback: function (res) {
-        if (res.credential) {
-          window.accessToken = null;
-          var payload = JSON.parse(atob(res.credential.split('.')[1]));
-          document.getElementById('user-name').textContent = 'Увійшов: ' + (payload.name || payload.email);
-          document.getElementById('signin-area').classList.add('hidden');
-          document.getElementById('signedin-area').classList.remove('hidden');
-          document.getElementById('send-gmail-btn').classList.remove('hidden');
-        }
-      }
-    });
-    google.accounts.id.renderButton(document.getElementById('google-signin-btn'), {
-      type: 'standard',
-      theme: 'outline',
-      size: 'large',
-      text: 'continue_with',
-      locale: 'uk'
-    });
-  }
-
-  document.getElementById('signout-btn').addEventListener('click', function () {
-    if (window.google && google.accounts && google.accounts.id) {
-      google.accounts.id.disableAutoSelect();
-    }
-    window.accessToken = null;
-    document.getElementById('signin-area').classList.remove('hidden');
-    document.getElementById('signedin-area').classList.add('hidden');
-    document.getElementById('send-gmail-btn').classList.add('hidden');
-  });
-
+  document.getElementById('fill-template-btn').addEventListener('click', fillTemplateClick);
   document.getElementById('preview-btn').addEventListener('click', showPreview);
   document.getElementById('preview-close').addEventListener('click', closePreview);
   document.getElementById('preview-close-backdrop').addEventListener('click', closePreview);
   document.getElementById('send-mailto-btn').addEventListener('click', sendMailto);
-  document.getElementById('send-gmail-btn').addEventListener('click', sendViaGmail);
 
   document.getElementById('preview-modal').addEventListener('keydown', function (e) {
     if (e.key === 'Escape') closePreview();
   });
 
   initDeputyEmails();
-  if (window.GOOGLE_CLIENT_ID) {
-    initGoogleSignIn();
-  }
 })();

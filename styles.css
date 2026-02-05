@@ -1,13 +1,21 @@
 :root {
-  --bg: #0f1419;
-  --surface: #1a2332;
-  --border: #2d3a4d;
-  --text: #e7e9ea;
-  --text-muted: #8b98a5;
-  --accent: #1d9bf0;
-  --accent-hover: #1a8cd8;
-  --yellow: #ffd93d;
-  --success: #00ba7c;
+  /* Квір-орієнтована палітра (pride) */
+  --pride-red: #e40303;
+  --pride-orange: #ff8c00;
+  --pride-yellow: #ffed00;
+  --pride-green: #008026;
+  --pride-blue: #24408e;
+  --pride-violet: #732982;
+  --pride-pink: #eb7bc0;
+  --bg: #1a1520;
+  --surface: #251f2e;
+  --surface-2: #2d2638;
+  --border: #3d3548;
+  --text: #f5f0fa;
+  --text-muted: #b8a9c9;
+  --accent: #c77eb5;
+  --accent-hover: #d99bc8;
+  --accent-soft: rgba(199, 126, 181, 0.2);
   --font: 'Segoe UI', system-ui, -apple-system, sans-serif;
 }
 
@@ -24,18 +32,49 @@ body {
   color: var(--text);
   background: var(--bg);
   -webkit-font-smoothing: antialiased;
+  display: flex;
+  flex-direction: column;
+  align-items: stretch;
+}
+
+/* Радужна смуга зверху */
+.rainbow-bar {
+  height: 6px;
+  background: linear-gradient(
+    90deg,
+    var(--pride-red) 0%,
+    var(--pride-orange) 17%,
+    var(--pride-yellow) 33%,
+    var(--pride-green) 50%,
+    var(--pride-blue) 67%,
+    var(--pride-violet) 83%,
+    var(--pride-pink) 100%
+  );
+  flex-shrink: 0;
 }
 
 .container {
+  flex: 1;
   max-width: 640px;
   margin: 0 auto;
   padding: 2rem 1.25rem;
+  width: 100%;
 }
 
 header {
   margin-bottom: 2rem;
   padding-bottom: 1.5rem;
-  border-bottom: 1px solid var(--border);
+  border-bottom: 2px solid transparent;
+  border-image: linear-gradient(
+    90deg,
+    var(--pride-red),
+    var(--pride-orange),
+    var(--pride-yellow),
+    var(--pride-green),
+    var(--pride-blue),
+    var(--pride-violet),
+    var(--pride-pink)
+  ) 1;
 }
 
 header h1 {
@@ -43,6 +82,7 @@ header h1 {
   font-size: 1.75rem;
   font-weight: 700;
   letter-spacing: -0.02em;
+  color: var(--text);
 }
 
 .subtitle {
@@ -105,7 +145,35 @@ label:last-child {
 }
 
 .required {
-  color: var(--yellow);
+  color: var(--pride-pink);
+}
+
+/* Помітна підказка-крок */
+.step-callout {
+  margin-bottom: 1rem;
+  padding: 1rem 1.25rem;
+  background: var(--accent-soft);
+  border-left: 4px solid var(--accent);
+  border-radius: 0 10px 10px 0;
+  box-shadow: 0 0 0 1px rgba(199, 126, 181, 0.15);
+}
+
+.step-callout-label {
+  display: inline-block;
+  font-size: 0.75rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  color: var(--accent);
+  margin-bottom: 0.35rem;
+}
+
+.step-callout-text {
+  margin: 0;
+  font-size: 1rem;
+  font-weight: 500;
+  line-height: 1.5;
+  color: var(--text);
 }
 
 input[type="text"],
@@ -140,6 +208,15 @@ textarea {
   color: var(--text-muted);
 }
 
+.letter-label {
+  display: block;
+  margin-top: 0.75rem;
+}
+
+.letter-label textarea {
+  min-height: 320px;
+}
+
 .actions {
   display: flex;
   flex-wrap: wrap;
@@ -171,12 +248,13 @@ textarea {
 }
 
 .btn-primary {
-  background: var(--accent);
+  background: linear-gradient(135deg, var(--pride-violet) 0%, var(--pride-pink) 100%);
   color: #fff;
 }
 
 .btn-primary:hover:not(:disabled) {
-  background: var(--accent-hover);
+  background: linear-gradient(135deg, #8a3a9e 0%, var(--pride-pink) 100%);
+  filter: brightness(1.08);
 }
 
 .btn-secondary {
@@ -224,7 +302,7 @@ footer {
   background: var(--surface);
   border: 1px solid var(--border);
   border-radius: 16px;
-  box-shadow: 0 20px 60px rgba(0, 0, 0, 0.4);
+  box-shadow: 0 20px 60px rgba(0, 0, 0, 0.4), 0 0 0 1px var(--accent);
   display: flex;
   flex-direction: column;
 }

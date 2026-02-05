@@ -5,26 +5,18 @@
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>Звернення щодо законопроєкту №14394</title>
   <link rel="stylesheet" href="styles.css">
-  <script src="https://accounts.google.com/gsi/client" async defer></script>
 </head>
 <body>
+  <div class="rainbow-bar" aria-hidden="true"></div>
   <div class="container">
     <header>
       <h1>Звернення щодо законопроєкту №14394</h1>
       <p class="subtitle">Цивільний кодекс України — шаблон листа народним депутатам</p>
     </header>
 
-    <section class="auth-section" id="auth-section">
-
-      <div id="signedin-area" class="hidden">
-        <span id="user-name"></span>
-        <button type="button" id="signout-btn" class="btn btn-secondary">Вийти</button>
-      </div>
-    </section>
-
     <form id="letter-form">
       <fieldset>
-        <legend>Ваші дані (заповніть поля, позначені як обовʼязкові)</legend>
+        <legend>Ваші дані</legend>
         <label>
           ПІБ <span class="required">*</span>
           <input type="text" name="pib" id="pib" required placeholder="Прізвище Ім'я По батькові">
@@ -38,8 +30,19 @@
           <input type="email" name="email" id="email" required placeholder="your@email.com">
         </label>
         <label>
-          Ваш персональний коментар <span class="required">*</span>
-          <textarea name="comment" id="comment" rows="4" required placeholder="Чому для вас важливо не підтримувати цей законопроєкт у поточному вигляді? (це допоможе листам не виглядати однаково)"></textarea>
+          Персональний коментар (підставляється в шаблон)
+          <input type="text" name="comment" id="comment" placeholder="Чому для вас це важливо — опціонально для шаблону">
+        </label>
+      </fieldset>
+
+      <fieldset>
+        <legend>Текст заяви</legend>
+        <div class="step-callout" role="status"> 
+          <p class="step-callout-text">Натисніть «Заповнити шаблон», щоб підставити ваші дані в шаблон, потім можете вільно редагувати текст нижче.</p>
+        </div>
+        <button type="button" id="fill-template-btn" class="btn btn-secondary">Заповнити шаблон</button>
+        <label class="letter-label">
+          <textarea name="letter-body" id="letter-body" rows="18" placeholder="Тут зʼявиться текст листа після натискання «Заповнити шаблон» або введіть свій текст самостійно."></textarea>
         </label>
       </fieldset>
 
@@ -52,7 +55,6 @@
       <div class="actions">
         <button type="button" id="preview-btn" class="btn btn-secondary">Як виглядатиме лист</button>
         <button type="button" id="send-mailto-btn" class="btn btn-primary">Відкрити у поштовому клієнті</button>
-        <button type="button" id="send-gmail-btn" class="btn btn-primary hidden">Відправити депутатам (Gmail)</button>
       </div>
     </form>
 
@@ -61,7 +63,6 @@
     </footer>
   </div>
 
-  <!-- Preview modal -->
   <div id="preview-modal" class="modal hidden" aria-hidden="true">
     <div class="modal-backdrop" id="preview-close-backdrop"></div>
     <div class="modal-content">
